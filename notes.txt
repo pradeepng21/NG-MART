@@ -1,0 +1,99 @@
+to create a project --> django-admin startproject project_name  #(enter this in console).
+
+change the interpreter to virtual one if you are working at a virtual environment.
+
+to run the project --> python manage.py runserver || python manage.py runserver 8001 #to run it on different port number.
+
+change the database from sqlite to mysql.(settings.py la poi mathanum)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ngmart',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': '',
+        'PORT': '3306'
+    }
+#check it by running the project.
+
+create a app(shop) using the command --> python manage.py startapp shop
+after creating an app save the app name in the file settings.py under the list installed_apps.
+in the shop folder create a file urls.py and connect the file to the urls.py in the ngmart folder.--> path('', include('shop.urls'))
+then, In shop folder add the urls package and urls_pattern to the urls.py file.
+create templates folder in the shop folder.
+create a shop folder in the template folder.
+create a index.html file in the shop folder(put some code in the html file to check it).
+
+open views.py in shop folder and create a function home return render(request, "shop/index.html")
+and then open the urls.py file in shop folder import . from views and inside the path add 'home', views.home, name='home'
+
+Run the file manage.py using the command "python manage.py runserver"  it will show some error. You have to change the path to http://127.0.0.1:8000/home from 
+http://127.0.0.1:8000/. if you wanna render a register page means u have change the path to http://127.0.0.1:8000/register.
+
+Create a folder(layouts) in the path templates\shop and create a file main.html to add the bootstrap layouts.  
+in the main.html body add the {% block content %} and {% endblock content %} for html content.
+and {% block scripts %} {% endblock scripts %} for javascript contents.
+
+create a inc folder inside the shop folder and create file navbar.html
+
+go to settings.py in ngmart folder create a variable MEDIA_URL and assign '/images/' to it to access the images in the images folder
+create another variable MEDIA_ROOT and assign BASE_DIR/'static' to it
+
+In models.py file create a class Category (class Category(models.Model):) 
+Import the datetime and os packages and create a function to add and update pictures. the updated 
+picture will store in the name of current date and time.
+
+Create a function getFileName with the parameters request, filename  
+
+def getFileName(requests, filename):
+    time = datetime.datetime.now().strftime("%Y%m%d%H:%H:%S")
+    new_filename = "%s%s"%(time, filename)
+    return os.path.join('uploads/',new_filename)
+
+class Category(models.Model):
+    name = models.CharField(max_length=150, null= False, blank=False)
+    image = models.ImageField(upload_to=getFileName, null=True, blank=True)
+    description = models.TextField(max_length=500, null=False, blank= False)
+    status = models.BooleanField(default=False, help_text="0-show, 1-hidden")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+def __str__(self):
+    return self.name
+
+class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    name = models.CharField(max_length=150, null= False, blank=False)
+    vendor = models.CharField(max_length=150, null= False, blank=False)
+    quantity = models.IntegerField(null=False, blank=False)
+    original_price = models.FloatField(null=False, blank=False)
+    selling_price = models.FloatField(null=False, blank=False)
+    prd_image = models.ImageField(upload_to=getFileName, null=True, blank=True)
+    description = models.TextField(max_length=500, null=False, blank= False)
+    status = models.BooleanField(default=False, help_text="0-show, 1-hidden")
+    popular = models.BooleanField(default=False, help_text="0-default, 1-popular")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+def __str__(self):
+    return self.name
+
+after creating two classes category and product make migration using the following 2 commands:
+   1. python manage.py makemigration
+   2. python manage.py migrate
+
+create a superuser using the following command:
+   --> python manage.py createsuperuser
+and create the username and password.
+
+groups and users will appear in the django admin page but the category and product tables will not appear to make 
+it available to that page we have to register in the admin.py file
+
+from .models import *  #this will import all the classes from the models.py file
+
+
+
+
+
+
+
+
